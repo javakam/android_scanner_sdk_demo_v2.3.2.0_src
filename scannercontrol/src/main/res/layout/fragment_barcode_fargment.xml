@@ -2,10 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/light_gray"
+    android:orientation="vertical"
     tools:context=".fragments.BarcodeFargment">
-
 
 
     <TableRow
@@ -14,56 +13,60 @@
         android:background="@color/light_gray">
 
         <TextView
-            style="@style/roboto_regular_16dp"
             android:id="@+id/barcodesListCount"
+            style="@style/roboto_regular_16dp"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Barcodes Scanned: 0"
+            android:layout_marginLeft="18dp"
             android:gravity="center_vertical"
-            android:layout_marginLeft="18dp" />
+            android:text="Barcodes Scanned: 0" />
     </TableRow>
-    <LinearLayout android:orientation="vertical"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="85"
-        android:gravity="center_horizontal">
-    <ListView
-        android:id="@+id/barcodesList"
-        android:scrollbars = "vertical"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/white"
-        android:layout_weight="85"
-        android:paddingRight="8dp"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollIndicators="right"
-        android:fadeScrollbars="false"
-        android:fastScrollEnabled="false"
-        android:fastScrollAlwaysVisible="false"
-        style ="@style/style_scrollbar"
-        tools:targetApi="m" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/barcodesList"
+            style="@style/style_scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="85"
+            android:background="@color/white"
+            android:fadeScrollbars="false"
+            android:fastScrollAlwaysVisible="false"
+            android:fastScrollEnabled="false"
+            android:paddingRight="8dp"
+            android:scrollIndicators="right"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            tools:targetApi="m" />
     </LinearLayout>
 
     <TableRow
         style="@style/light_gray_background_row"
-        android:layout_height="91dp"
         android:layout_width="match_parent"
-        android:weightSum="1"
-        android:gravity="center_vertical|center_horizontal">
+        android:layout_height="91dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:weightSum="1">
 
         <Button
-            style="@style/style_blue_gray_button"
-            android:text="@string/clearList"
-            android:textSize="24sp"
             android:id="@+id/btnClearList"
-            android:onClick="clearList"
-            android:layout_height="55dp"
+            style="@style/style_blue_gray_button"
             android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="18dp"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
-            android:layout_marginBottom="18dp"
-            android:layout_marginTop="18dp" />
+            android:layout_marginTop="18dp"
+            android:onClick="clearList"
+            android:text="@string/clearList"
+            android:textSize="24sp" />
     </TableRow>
+
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,7 +78,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="18dp"
             android:layout_weight="0"
-            android:text="@string/sample_barcodes"/>
+            android:text="@string/sample_barcodes" />
 
         <LinearLayout
             android:layout_width="0dp"

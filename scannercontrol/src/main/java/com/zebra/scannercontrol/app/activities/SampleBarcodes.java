@@ -114,6 +114,7 @@ public class SampleBarcodes extends BaseActivity implements NavigationView.OnNav
             });
 
             dlg.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialog, int arg) {
 
                 }
@@ -232,6 +233,5 @@ public class SampleBarcodes extends BaseActivity implements NavigationView.OnNav
         if (code128 != null) {
             code128.setChecked(false);
         }
-
     }
 }

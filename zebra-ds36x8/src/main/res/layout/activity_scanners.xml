@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical">
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray">
+
+        <TextView
+            android:id="@+id/barcodesListCount"
+            style="@style/roboto_regular_16dp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="18dp"
+            android:gravity="center_vertical"
+            android:text="Barcodes Scanned: 0" />
+    </TableRow>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="85"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/barcodesList"
+            style="@style/style_scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="85"
+            android:background="@color/white"
+            android:fadeScrollbars="false"
+            android:fastScrollAlwaysVisible="false"
+            android:fastScrollEnabled="false"
+            android:paddingRight="8dp"
+            android:scrollIndicators="right"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            tools:targetApi="m" />
+    </LinearLayout>
+
+    <TableRow
+        style="@style/light_gray_background_row"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/btnClearList"
+            style="@style/style_blue_gray_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="45dp"
+            android:layout_marginTop="18dp"
+            android:onClick="clearList"
+            android:text="@string/clearList"
+            android:textSize="24sp" />
+    </TableRow>
+</LinearLayout>

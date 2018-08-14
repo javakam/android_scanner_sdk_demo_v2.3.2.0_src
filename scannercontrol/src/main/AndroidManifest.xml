@@ -11,11 +11,11 @@
     <application
         android:name=".application.Application"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activities.HomeActivity"
             android:configChanges="orientation|screenSize"
@@ -86,11 +86,11 @@
             android:label="@string/title_activity_active_scanner"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
-        <intent-filter>
-            <action android:name="activities.ActiveScannerActivity" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-    </activity>
+            <intent-filter>
+                <action android:name="activities.ActiveScannerActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.BeeperActionsActivity"
             android:configChanges="orientation|screenSize"
@@ -225,12 +225,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.zebra.scannercontrol.app.activities.ActiveScannerActivity" />
         </activity>
-        <activity android:name=".activities.SsaSetSymbologyActivity"
-            android:noHistory="true"
+        <activity
+            android:name=".activities.SsaSetSymbologyActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_scan_speed_analytics"
+            android:noHistory="true"
             android:parentActivityName=".activities.ActiveScannerActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.zebra.scannercontrol.app.activities.ActiveScannerActivity" />
@@ -248,8 +249,7 @@
         <activity
             android:name=".activities.DecodeImageActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
     </application>
 

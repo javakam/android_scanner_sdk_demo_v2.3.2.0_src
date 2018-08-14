@@ -1,0 +1,114 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical">
+
+    <TableRow
+        android:id="@+id/tbl_row_last_connected_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray">
+
+        <TextView
+            android:id="@+id/txt_last_connected_scanner"
+            style="@style/roboto_regular_16dp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="@dimen/app_margin_left"
+            android:gravity="center_vertical"
+            android:text="@string/last_connected_scanner" />
+    </TableRow>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/last_connected_scanner"
+            style="@style/style_scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fadeScrollbars="false"
+            android:fastScrollAlwaysVisible="false"
+            android:fastScrollEnabled="false"
+            android:paddingRight="8dp"
+            android:scrollIndicators="right"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            tools:targetApi="m" />
+    </LinearLayout>
+
+    <include layout="@layout/normal_divider" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray">
+
+        <TextView
+            android:id="@+id/txt_other_scanners"
+            style="@style/roboto_regular_16dp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="@dimen/app_margin_left"
+            android:gravity="center_vertical"
+            android:text="@string/other_scanners" />
+    </TableRow>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/other_scanners"
+            style="@style/style_scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:choiceMode="singleChoice"
+            android:clickable="true"
+            android:fadeScrollbars="false"
+            android:fastScrollAlwaysVisible="false"
+            android:fastScrollEnabled="false"
+            android:paddingRight="8dp"
+            android:scrollIndicators="right"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            tools:targetApi="m" />
+    </LinearLayout>
+
+    <include layout="@layout/normal_divider" />
+
+    <LinearLayout
+        android:id="@+id/noScannersMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/msgNoScanners"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/bt_no_scanners"
+            android:textSize="8pt" />
+
+        <Button
+            android:id="@+id/btnConnHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="OnConnHelp"
+            android:text="Follow tutorial >> " />
+    </LinearLayout>
+
+</LinearLayout>

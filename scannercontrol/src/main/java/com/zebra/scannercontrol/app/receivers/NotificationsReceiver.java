@@ -83,6 +83,8 @@ public class NotificationsReceiver extends BroadcastReceiver {
         mBuilder.setContentIntent(resultPendingIntent);
 
         //Notify with the notification ID
-        if(mgr!=null) mgr.notify(intent.getIntExtra(Constants.NOTIFICATIONS_ID, DEFAULT_NOTIFICATION_ID), mBuilder.build());
+        if(mgr!=null) {
+            mgr.notify(intent.getIntExtra(Constants.NOTIFICATIONS_ID, DEFAULT_NOTIFICATION_ID), mBuilder.build());
+        }
     }
 }

@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.richfit.zebra_ds36x8.activity.HomeActivity">
+    <item
+        android:id="@+id/action_shut_scanner"
+        android:orderInCategory="99"
+        android:title="@string/action_shut_scanner"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_device_list"
+        android:orderInCategory="100"
+        android:title="@string/action_device_list"
+        app:showAsAction="ifRoom" />
+</menu>

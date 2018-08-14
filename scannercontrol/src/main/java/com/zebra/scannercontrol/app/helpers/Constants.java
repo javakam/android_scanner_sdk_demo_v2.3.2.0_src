@@ -16,7 +16,7 @@ public class Constants {
 
 
     public enum DEBUG_TYPE {
-        TYPE_DEBUG, TYPE_ERROR
+        TYPE_DEBUG,TYPE_WARN, TYPE_ERROR
     }
 
     //For shared prefs
@@ -127,10 +127,13 @@ public class Constants {
      */
     public static void logAsMessage(DEBUG_TYPE type, String TAG, String message) {
         if (DEBUG) {
-            if (type == DEBUG_TYPE.TYPE_DEBUG)
+            if (type == DEBUG_TYPE.TYPE_DEBUG) {
                 Log.d(TAG, message);
-            else if (type == DEBUG_TYPE.TYPE_ERROR)
+            } else if (type == DEBUG_TYPE.TYPE_WARN) {
+                Log.w(TAG, message);
+            }else if (type == DEBUG_TYPE.TYPE_ERROR) {
                 Log.e(TAG, message);
+            }
         }
     }
 }

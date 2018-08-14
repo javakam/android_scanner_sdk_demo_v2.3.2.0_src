@@ -1,1 +1,1 @@
-include ':BarcodeScannerLibrary', ':scannercontrol'
+include ':BarcodeScannerLibrary', ':scannercontrol', ':zebra-ds36x8'

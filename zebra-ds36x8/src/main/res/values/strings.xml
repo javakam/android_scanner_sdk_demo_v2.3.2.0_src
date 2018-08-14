@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">zebra-ds36x8</string>
+    <string name="action_shut_scanner">关闭</string>
+    <string name="action_device_list">设备</string>
+
+    <string name="last_connected_scanner">Last Connected Scanner</string>
+    <string name="bt_scanners_not_found">BT scanners not found</string>
+    <string name="bt_no_scanners">No scanner found.</string>
+    <string name="other_scanners">Other Scanners</string>
+    <string name="reconnect_scanner">Reconnect Scanner</string>
+
+    <string name="beeper_sequence">Beeper Sequence</string>
+    <string name="selct_code">Select Code Type</string>
+    <string name="get_bt_address_instruction1">Please Enter Your Bluetooth Address.</string>
+    <string name="get_bt_address_instruction_item_1"> Navigate to \"Settings > General > About > Bluetooth Address\" or </string>
+    <string name="get_bt_address_instruction_item_2">Then write down the Bluetooth address.</string>
+    <string name="get_bt_address_instruction_item_3">Hit back button until return to this screen.</string>
+    <string name="get_bt_address_instruction_item_4">Then type address below.</string>
+    <string name="about_phone">GO TO ABOUT PHONE</string>
+    <string name="cancel2">Cancel</string>
+    <string name="bluetooth_address">Bluetooth Address</string>
+    <string name="clear">Clear</string>
+    <string name="operationmode_dialog_title">Select Operation Mode</string>
+    <string name="ok">OK</string>
+    <string name="cancel_upper">CANCEL</string>
+    <string name="cancel">Cancel</string>
+    <string name="continue_txt">Continue</string>
+    <string name="instruction_snapi">Attach your cabled scanner to your device and scan the barcode to connect with this app.</string>
+    <string name="instruction">Scan barcode to pair your cordless scanner to this app.</string>
+    <string name="menu_add_scanner">Add Scanner</string>
+    <string name="clearList">CLEAR LIST</string>
+    <string name="clearData">CLEAR DATA</string>
+    <string name="sample_barcodes">Sample Barcodes for Scanning</string>
+    <string name="title_activity_active_scanner">Active Scanner</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

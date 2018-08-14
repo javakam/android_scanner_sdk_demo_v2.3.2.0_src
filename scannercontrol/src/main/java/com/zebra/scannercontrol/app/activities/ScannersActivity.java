@@ -36,7 +36,8 @@ import com.zebra.scannercontrol.app.receivers.NotificationsReceiver;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ScannersActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, ScannerAppEngine.IScannerAppEngineDevListDelegate {
+public class ScannersActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener
+        , ScannerAppEngine.IScannerAppEngineDevListDelegate {
 
     AvailableScannerListAdapter lastConnectedScannerListAdapter;
     ListView lastConnectedScanner;
@@ -49,10 +50,10 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     // Member fields
     private CustomProgressDialog progressDialog;
 
-    static  AvailableScanner curAvailableScanner=null;
+    static AvailableScanner curAvailableScanner = null;
     int scannerId;
 
-    static MyAsyncTask cmdExecTask=null;
+    static MyAsyncTask cmdExecTask = null;
     private int REFRESH = 1;
     private int EVENT = 2;
     private int CREATE = 3;
@@ -62,14 +63,14 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_scanners);
+        setContentView(R.layout.activity_scanners);
         Configuration configuration = getResources().getConfiguration();
-        if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            if(configuration.smallestScreenWidthDp<Application.minScreenWidth){
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (configuration.smallestScreenWidthDp < Application.minScreenWidth) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
-        }else{
-            if(configuration.screenWidthDp<Application.minScreenWidth){
+        } else {
+            if (configuration.screenWidthDp < Application.minScreenWidth) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         }
@@ -78,14 +79,14 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
 
         otherScanners = (ListView) findViewById(R.id.other_scanners);
         scannersList = new ArrayList<AvailableScanner>();
-        availableScannerListAdapter = new AvailableScannerListAdapter(this,scannersList);
+        availableScannerListAdapter = new AvailableScannerListAdapter(this, scannersList);
         otherScanners.setAdapter(availableScannerListAdapter);
         otherScanners.setOnItemClickListener(mDeviceClickListener);
         otherScanners.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         lastConnectedScanner = (ListView) findViewById(R.id.last_connected_scanner);
         lastConnectedScannerList = new ArrayList<AvailableScanner>();
-        lastConnectedScannerListAdapter = new AvailableScannerListAdapter(this,lastConnectedScannerList);
+        lastConnectedScannerListAdapter = new AvailableScannerListAdapter(this, lastConnectedScannerList);
         lastConnectedScanner.setAdapter(lastConnectedScannerListAdapter);
         lastConnectedScanner.setOnItemClickListener(mDeviceClickListenerLastConnected);
         lastConnectedScanner.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -98,7 +99,55 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
         }
 
         launchFromFCS = getIntent().getBooleanExtra(Constants.LAUNCH_FROM_FCS, false);
-     }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) this.getSystemService(ns);
+        if (nMgr != null) {
+            nMgr.cancel(NotificationsReceiver.DEFAULT_NOTIFICATION_ID);
+        }
+        addDevListDelegate(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeDevListDelegate(this);
+        /*
+         * RHBJ36 03.03.2016
+         * Device discovery is resource heavy operation.
+         * Make sure to cancel the discovery when not needed.
+         */
+        Application.sdkHandler.dcssdkStopScanningDevices();
+
+        if (isInBackgroundMode(getApplicationContext())) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) this.getSystemService(ns);
+        if (nMgr != null) {
+            nMgr.cancel(NotificationsReceiver.DEFAULT_NOTIFICATION_ID);
+        }
+        removeDevListDelegate(this);
+    }
 
 
     private final Handler UpdateScannersHandler = new Handler() {
@@ -108,21 +157,20 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
             scannersList.clear();
             lastConnectedScannerList.clear();
             boolean enableLastScannerConnection = false;
-            if(Application.lastConnectedScanner !=null) {
+            if (Application.lastConnectedScanner != null) {
                 DCSScannerInfo device = Application.lastConnectedScanner;
                 addToLastConnectedScannerList(new AvailableScanner(device.getScannerID(), device.getScannerName(), device.getScannerHWSerialNumber(), false, device.isAutoCommunicationSessionReestablishment(), device.getConnectionType()));
             }
-            for(DCSScannerInfo device:getActualScannersList()){
-                if(device.isActive()){
-                    AvailableScanner availableScanner = new AvailableScanner(device.getScannerID(),device.getScannerName(), device.getScannerHWSerialNumber(),true,device.isAutoCommunicationSessionReestablishment(),device.getConnectionType());
+            for (DCSScannerInfo device : getActualScannersList()) {
+                if (device.isActive()) {
+                    AvailableScanner availableScanner = new AvailableScanner(device.getScannerID(), device.getScannerName(), device.getScannerHWSerialNumber(), true, device.isAutoCommunicationSessionReestablishment(), device.getConnectionType());
                     Application.currentConnectedScanner = device;
                     Application.lastConnectedScanner = Application.currentConnectedScanner;
                     availableScanner.setIsConnectable(true);
                     addToLastConnectedScannerList(availableScanner);
                     enableLastScannerConnection = true;
-                }else
-                {
-                    AvailableScanner availableScanner = new AvailableScanner(device.getScannerID(),device.getScannerName(), device.getScannerHWSerialNumber(),false,device.isAutoCommunicationSessionReestablishment(),device.getConnectionType());
+                } else {
+                    AvailableScanner availableScanner = new AvailableScanner(device.getScannerID(), device.getScannerName(), device.getScannerHWSerialNumber(), false, device.isAutoCommunicationSessionReestablishment(), device.getConnectionType());
                     availableScanner.setIsConnectable(true);
                     addToAvailableScannerList(availableScanner);
                 }
@@ -132,7 +180,7 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
 
             AvailableScanner currentConnectedScannerX = null;
 
-            if(Application.lastConnectedScanner !=null) {
+            if (Application.lastConnectedScanner != null) {
                 AvailableScanner lastConnectedScanner = null;
                 for (AvailableScanner scanner : scannersList) {
                     if (scanner.getScannerId() == Application.lastConnectedScanner.getScannerID()) {
@@ -143,8 +191,8 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
                         break;
                     }
 
-                    if(Application.currentConnectedScanner != null){
-                        if(Application.currentConnectedScanner.getScannerHWSerialNumber().equals(scanner.getScannerAddress())){
+                    if (Application.currentConnectedScanner != null) {
+                        if (Application.currentConnectedScanner.getScannerHWSerialNumber().equals(scanner.getScannerAddress())) {
                             currentConnectedScannerX = scanner;
                         }
                     }
@@ -154,43 +202,39 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
                 }
             }
 
-            if(currentConnectedScannerX != null){
+            if (currentConnectedScannerX != null) {
                 scannersList.remove(currentConnectedScannerX);
             }
 
-            ListView lvLastConnectedScanner= (ListView)findViewById(R.id.last_connected_scanner);
+            ListView lvLastConnectedScanner = (ListView) findViewById(R.id.last_connected_scanner);
             if (lvLastConnectedScanner != null) {
                 lvLastConnectedScanner.setEnabled(enableLastScannerConnection);
             }
 
 
-
-            if (availableScannerListAdapter!=null) {
+            if (availableScannerListAdapter != null) {
                 availableScannerListAdapter.notifyDataSetChanged();
             }
-            if (lastConnectedScannerListAdapter!=null) {
+            if (lastConnectedScannerListAdapter != null) {
                 lastConnectedScannerListAdapter.notifyDataSetChanged();
             }
-            ListView lv= (ListView)findViewById(R.id.other_scanners);
-            View ll= (View)findViewById(R.id.noScannersMessage);
-            TableRow tblROwLastScannerConnected = (TableRow)findViewById(R.id.tbl_row_last_connected_scanner);
+            ListView lv = (ListView) findViewById(R.id.other_scanners);
+            View ll = (View) findViewById(R.id.noScannersMessage);
+            TableRow tblROwLastScannerConnected = (TableRow) findViewById(R.id.tbl_row_last_connected_scanner);
 
-            if (availableScannerListAdapter.getCount()==0 && lastConnectedScannerListAdapter.getCount() == 0)
-            {
+            if (availableScannerListAdapter.getCount() == 0 && lastConnectedScannerListAdapter.getCount() == 0) {
 
                 lv.setVisibility(View.GONE);
                 ll.setVisibility(View.VISIBLE);
 
-            }
-            else
-            {
+            } else {
                 lv.setVisibility(View.VISIBLE);
                 ll.setVisibility(View.GONE);
             }
 
-            if(lastConnectedScannerListAdapter.getCount() == 0){
+            if (lastConnectedScannerListAdapter.getCount() == 0) {
                 tblROwLastScannerConnected.setVisibility(View.GONE);
-            }else{
+            } else {
                 tblROwLastScannerConnected.setVisibility(View.VISIBLE);
             }
             TextView lastConnectedScannerTxt = (TextView) findViewById(R.id.txt_last_connected_scanner);
@@ -198,9 +242,9 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
                 lastConnectedScannerTxt.setText("Last Connected Scanner");
             }
 
-            if(lastConnectedScannerList.size()>0){
-                if(lastConnectedScannerList.get(0).isConnected()){
-                    if(msg.what ==EVENT) {
+            if (lastConnectedScannerList.size() > 0) {
+                if (lastConnectedScannerList.get(0).isConnected()) {
+                    if (msg.what == EVENT) {
                         if (cmdExecTask == null || AsyncTask.Status.RUNNING != cmdExecTask.getStatus()) {
                             Application.CurScannerName = lastConnectedScannerList.get(0).getScannerName();
                             Application.CurScannerAddress = lastConnectedScannerList.get(0).getScannerAddress();
@@ -225,7 +269,7 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     };
 
     private void addToAvailableScannerList(AvailableScanner availableScanner) {
-        if(!scannersList.contains(availableScanner)) {
+        if (!scannersList.contains(availableScanner)) {
             scannersList.add(availableScanner);
         }
     }
@@ -233,48 +277,6 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     private void addToLastConnectedScannerList(AvailableScanner availableScanner) {
         lastConnectedScannerList.clear();
         lastConnectedScannerList.add(availableScanner);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-
-        String ns = Context.NOTIFICATION_SERVICE;
-        NotificationManager nMgr = (NotificationManager) this.getSystemService(ns);
-        if (nMgr != null) {
-            nMgr.cancel(NotificationsReceiver.DEFAULT_NOTIFICATION_ID);
-        }
-        removeDevListDelegate(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        removeDevListDelegate(this);
-/*
-		* RHBJ36 03.03.2016
-		* Device discovery is resource heavy operation.
-		* Make sure to cancel the discovery when not needed.
-		*/
-        Application.sdkHandler.dcssdkStopScanningDevices();
-
-        if (isInBackgroundMode(getApplicationContext())) {
-            finish();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        String ns = Context.NOTIFICATION_SERVICE;
-        NotificationManager nMgr = (NotificationManager) this.getSystemService(ns);
-        if (nMgr != null) {
-            nMgr.cancel(NotificationsReceiver.DEFAULT_NOTIFICATION_ID);
-        }
-        addDevListDelegate(this);
     }
 
     public void OnConnHelp(View v) {
@@ -286,8 +288,8 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
 
     private void UpdateScannerListView(int what) {
 
-        Message msg =  new Message();
-        msg.what= what;
+        Message msg = new Message();
+        msg.what = what;
         UpdateScannersHandler.sendMessage(msg);
 
     }
@@ -296,7 +298,7 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-         getMenuInflater().inflate(R.menu.scanners, menu);
+        getMenuInflater().inflate(R.menu.scanners, menu);
         return true;
     }
 
@@ -309,13 +311,13 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
         switch (item.getItemId()) {
             case R.id.action_add: {
                 configureNotificationAvailable(true);
-				/*
-				* RHBJ36 03.03.2016
-				* Start discovering available bluetooth devices.
-				*/
+                /*
+                 * RHBJ36 03.03.2016
+                 * Start discovering available bluetooth devices.
+                 */
                 Application.sdkHandler.dcssdkStartScanForAvailableDevices();
                 Application.sdkHandler.dcssdkStartScanForTopologyChanges();
-				return true;
+                return true;
             }
             case android.R.id.home:
                 onBackPressed();
@@ -327,7 +329,7 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
 
     @Override
     public void onBackPressed() {
-        if(Application.isAnyScannerConnected){
+        if (Application.isAnyScannerConnected) {
             Intent intent = new Intent(ScannersActivity.this, ActiveScannerActivity.class);
             intent.putExtra(Constants.SCANNER_NAME, curAvailableScanner.getScannerName());
             intent.putExtra(Constants.SCANNER_ADDRESS, curAvailableScanner.getScannerAddress());
@@ -335,11 +337,11 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
             intent.putExtra(Constants.AUTO_RECONNECTION, curAvailableScanner.isAutoReconnection());
             intent.putExtra(Constants.CONNECTED, true);
             startActivity(intent);
-        }else {
-            if(launchFromFCS){
+        } else {
+            if (launchFromFCS) {
                 Intent mainIntent = new Intent(this, HomeActivity.class);
                 startActivity(mainIntent);
-            }else {
+            } else {
                 super.onBackPressed();
             }
         }
@@ -348,12 +350,6 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
 
@@ -381,20 +377,20 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
     };
 
     private void ConnectToScanner(AvailableScanner availableScanner) {
-        for(DCSScannerInfo device:getActualScannersList()) {
-            if(device.getScannerID() == availableScanner.getScannerId()){
+        for (DCSScannerInfo device : getActualScannersList()) {
+            if (device.getScannerID() == availableScanner.getScannerId()) {
                 availableScanner.setIsAutoReconnection(device.isAutoCommunicationSessionReestablishment());
             }
         }
-        if (availableScanner != null)
-        {
+        if (availableScanner != null) {
             if (!availableScanner.isConnected()) {
 
-                if ((curAvailableScanner!=null) &&(!availableScanner.getScannerAddress().equals(curAvailableScanner.getScannerAddress())))                 {
-                    if (curAvailableScanner.isConnected())
+                if ((curAvailableScanner != null) && (!availableScanner.getScannerAddress().equals(curAvailableScanner.getScannerAddress()))) {
+                    if (curAvailableScanner.isConnected()) {
                         disconnect(curAvailableScanner.getScannerId());
+                    }
                 }
-                cmdExecTask=new MyAsyncTask(availableScanner);
+                cmdExecTask = new MyAsyncTask(availableScanner);
                 cmdExecTask.execute();
 
             } else {
@@ -404,7 +400,7 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
                     Application.CurScannerName = availableScanner.getScannerName();
                     Application.CurScannerAddress = availableScanner.getScannerAddress();
                     Application.CurAutoReconnectionState = availableScanner.isAutoReconnection();
-                    Application.CurScannerId= availableScanner.getScannerId();
+                    Application.CurScannerId = availableScanner.getScannerId();
                     Intent intent = new Intent(ScannersActivity.this, ActiveScannerActivity.class);
                     intent.putExtra(Constants.SCANNER_NAME, availableScanner.getScannerName());
                     intent.putExtra(Constants.SCANNER_ADDRESS, availableScanner.getScannerAddress());
@@ -431,11 +427,13 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
         return true;
     }
 
-    private class MyAsyncTask extends AsyncTask<Void,AvailableScanner,Boolean> {
-        private AvailableScanner  scanner;
-        public MyAsyncTask(AvailableScanner scn){
-            this.scanner=scn;
+    private class MyAsyncTask extends AsyncTask<Void, AvailableScanner, Boolean> {
+        private AvailableScanner scanner;
+
+        public MyAsyncTask(AvailableScanner scn) {
+            this.scanner = scn;
         }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -457,14 +455,13 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            DCSSDKDefs.DCSSDK_RESULT result =connect(scanner.getScannerId());
-            if(result== DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS){
+            DCSSDKDefs.DCSSDK_RESULT result = connect(scanner.getScannerId());
+            if (result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS) {
                 curAvailableScanner = scanner;
                 curAvailableScanner.setConnected(true);
                 return true;
-            }
-            else {
-                curAvailableScanner=null;
+            } else {
+                curAvailableScanner = null;
                 return false;
             }
         }
@@ -472,12 +469,13 @@ public class ScannersActivity extends BaseActivity implements NavigationView.OnN
         @Override
         protected void onPostExecute(Boolean b) {
             super.onPostExecute(b);
-            if (progressDialog != null && progressDialog.isShowing())
+            if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
+            }
             Intent returnIntent = new Intent();
-            if(!b){
+            if (!b) {
                 setResult(RESULT_CANCELED, returnIntent);
-                Toast.makeText(getApplicationContext(),"Unable to communicate with scanner",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Unable to communicate with scanner", Toast.LENGTH_SHORT).show();
                 scannersListHasBeenUpdated();
             }
 

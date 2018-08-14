@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -47,10 +46,10 @@ import android.widget.TextView;
 import com.zebra.scannercontrol.BarCodeView;
 import com.zebra.scannercontrol.DCSSDKDefs;
 import com.zebra.scannercontrol.DCSScannerInfo;
-import com.zebra.scannercontrol.app.helpers.ScannerAppEngine;
 import com.zebra.scannercontrol.app.R;
 import com.zebra.scannercontrol.app.application.Application;
 import com.zebra.scannercontrol.app.helpers.Constants;
+import com.zebra.scannercontrol.app.helpers.ScannerAppEngine;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -58,7 +57,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 public class HomeActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,ScannerAppEngine.IScannerAppEngineDevConnectionsDelegate{
+        implements NavigationView.OnNavigationItemSelectedListener, ScannerAppEngine.IScannerAppEngineDevConnectionsDelegate {
     private FrameLayout llBarcode;
     private NavigationView navigationView;
     Menu menu;
@@ -69,18 +68,19 @@ public class HomeActivity extends BaseActivity
     Dialog dialogBTAddress;
     static String btAddress;
     static String userEnteredBluetoothAddress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         Configuration configuration = getResources().getConfiguration();
-        if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            if(configuration.smallestScreenWidthDp<Application.minScreenWidth){
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (configuration.smallestScreenWidthDp < Application.minScreenWidth) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
-        }else{
-            if(configuration.screenWidthDp<Application.minScreenWidth){
+        } else {
+            if (configuration.screenWidthDp < Application.minScreenWidth) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         }
@@ -90,11 +90,11 @@ public class HomeActivity extends BaseActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         menu = navigationView.getMenu();
         pairNewScannerMenu = menu.findItem(R.id.nav_pair_device);
@@ -108,7 +108,7 @@ public class HomeActivity extends BaseActivity
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSIONS_ACCESS_COARSE_LOCATION);
-        }else{
+        } else {
             initialize();
         }
     }
@@ -134,16 +134,16 @@ public class HomeActivity extends BaseActivity
         int width = size.x;
         int height = size.y;
 
-        int orientation =this.getResources().getConfiguration().orientation;
+        int orientation = this.getResources().getConfiguration().orientation;
         int x = width * 9 / 10;
         int y = x / 3;
-        if(getDeviceScreenSize()>6){ // TODO: Check 6 is ok or not
+        if (getDeviceScreenSize() > 6) { // TODO: Check 6 is ok or not
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                x =  width /2;
-                y = x/3;
-            }else {
-                x =  width *2/3;
-                y = x/3;
+                x = width / 2;
+                y = x / 3;
+            } else {
+                x = width * 2 / 3;
+                y = x / 3;
             }
         }
         barCodeView.setSize(x, y);
@@ -165,9 +165,9 @@ public class HomeActivity extends BaseActivity
             mHeightPixels = realSize.y;
             DisplayMetrics dm = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(dm);
-            double x = Math.pow(mWidthPixels/dm.xdpi,2);
-            double y = Math.pow(mHeightPixels/dm.ydpi,2);
-            screenInches = Math.sqrt(x+y);
+            double x = Math.pow(mWidthPixels / dm.xdpi, 2);
+            double y = Math.pow(mHeightPixels / dm.ydpi, 2);
+            screenInches = Math.sqrt(x + y);
         } catch (Exception ignored) {
         }
         return screenInches;
@@ -194,7 +194,7 @@ public class HomeActivity extends BaseActivity
         }
     }
 
-    private void initializeDcsSdk(){
+    private void initializeDcsSdk() {
         Application.sdkHandler.dcssdkEnableAvailableScannersDetection(true);
         Application.sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_BT_NORMAL);
         Application.sdkHandler.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_SNAPI);
@@ -239,37 +239,39 @@ public class HomeActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
-        if(id==R.id.nav_pair_device){
-            if(Application.isAnyScannerConnected) {
-                AlertDialog.Builder dlg = new  AlertDialog.Builder(this);
+        if (id == R.id.nav_pair_device) {
+            if (Application.isAnyScannerConnected) {
+                AlertDialog.Builder dlg = new AlertDialog.Builder(this);
                 dlg.setTitle("This will disconnect your current scanner");
                 //dlg.setIcon(android.R.drawable.ic_dialog_alert);
                 dlg.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int arg) {
 
                         disconnect(Application.currentConnectedScannerID);
                         Application.barcodeData.clear();
-                        Application.CurScannerId=Application.SCANNER_ID_NONE;
+                        Application.CurScannerId = Application.SCANNER_ID_NONE;
                         finish();
-                        Intent intent = new Intent(HomeActivity.this,HomeActivity.class);
+                        Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
                         startActivity(intent);
                     }
                 });
 
                 dlg.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int arg) {
 
-                    } });
+                    }
+                });
                 dlg.show();
-
             }
-        }else if (id == R.id.nav_devices) {
+        } else if (id == R.id.nav_devices) {
             intent = new Intent(this, ScannersActivity.class);
             startActivity(intent);
-        }else if (id == R.id.nav_find_cabled_scanner) {
+        } else if (id == R.id.nav_find_cabled_scanner) {
             intent = new Intent(this, FindCabledScanner.class);
             startActivity(intent);
-        }else if (id == R.id.nav_connection_help) {
+        } else if (id == R.id.nav_connection_help) {
             intent = new Intent(this, ConnectionHelpActivity2.class);
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
@@ -288,9 +290,9 @@ public class HomeActivity extends BaseActivity
 
 
     @Override
-    protected void onDestroy(){
-    // TODO: https://jiraemv.zebra.com/browse/SSDK-5961
-    // Application.sdkHandler.dcssdkClose();
+    protected void onDestroy() {
+        // TODO: https://jiraemv.zebra.com/browse/SSDK-5961
+        // Application.sdkHandler.dcssdkClose();
         super.onDestroy();
     }
 
@@ -314,8 +316,8 @@ public class HomeActivity extends BaseActivity
         navigationView.getMenu().findItem(R.id.nav_find_cabled_scanner).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_find_cabled_scanner).setCheckable(false);
         SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
-        TextView txtBarcodeType = (TextView)findViewById(R.id.scan_to_connect_barcode_type);
-        TextView txtScannerConfiguration = (TextView)findViewById(R.id.scan_to_connect_scanner_config);
+        TextView txtBarcodeType = (TextView) findViewById(R.id.scan_to_connect_barcode_type);
+        TextView txtScannerConfiguration = (TextView) findViewById(R.id.scan_to_connect_scanner_config);
         String sourceString = "";
         txtBarcodeType.setText(Html.fromHtml(sourceString));
         txtScannerConfiguration.setText("");
@@ -327,12 +329,12 @@ public class HomeActivity extends BaseActivity
         llBarcode = (FrameLayout) findViewById(R.id.scan_to_connect_barcode);
         DCSSDKDefs.DCSSDK_BT_PROTOCOL protocol = DCSSDKDefs.DCSSDK_BT_PROTOCOL.LEGACY_B;
         DCSSDKDefs.DCSSDK_BT_SCANNER_CONFIG config = DCSSDKDefs.DCSSDK_BT_SCANNER_CONFIG.KEEP_CURRENT;
-        if(barcode ==0){
+        if (barcode == 0) {
             txtBarcodeType.setText("");
             txtScannerConfiguration.setText("");
             sourceString = "STC Barcode ";
             txtBarcodeType.setText(Html.fromHtml(sourceString));
-            switch (protocolInt){
+            switch (protocolInt) {
                 case 0:
                     protocol = DCSSDKDefs.DCSSDK_BT_PROTOCOL.SSI_BT_CRADLE_HOST;//SSI over Classic Bluetooth
                     strProtocol = "SSI over Classic Bluetooth";
@@ -345,13 +347,13 @@ public class HomeActivity extends BaseActivity
                     protocol = DCSSDKDefs.DCSSDK_BT_PROTOCOL.SSI_BT_CRADLE_HOST;//SSI over Classic Bluetooth
                     break;
             }
-            if(setDefaults){
+            if (setDefaults) {
                 config = DCSSDKDefs.DCSSDK_BT_SCANNER_CONFIG.SET_FACTORY_DEFAULTS;
-                txtScannerConfiguration.setText(Html.fromHtml("<i> Set Factory Defaults, Com Protocol = "+strProtocol+"</i>"));
-            }else{
-                txtScannerConfiguration.setText(Html.fromHtml("<i> Keep Current Settings, Com Protocol = "+strProtocol+"</i>"));
+                txtScannerConfiguration.setText(Html.fromHtml("<i> Set Factory Defaults, Com Protocol = " + strProtocol + "</i>"));
+            } else {
+                txtScannerConfiguration.setText(Html.fromHtml("<i> Keep Current Settings, Com Protocol = " + strProtocol + "</i>"));
             }
-        }else{
+        } else {
             sourceString = "Legacy Pairing ";
             txtBarcodeType.setText(Html.fromHtml(sourceString));
             txtScannerConfiguration.setText("");
@@ -359,17 +361,17 @@ public class HomeActivity extends BaseActivity
         selectedProtocol = protocol;
         selectedConfig = config;
         generatePairingBarcode();
-        if(dialogBTAddress == null && firstRun && !dntShowMessage){
+        if (dialogBTAddress == null && firstRun && !dntShowMessage) {
             dialog = new Dialog(HomeActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.dialog_launch_instructions);
 
-            CheckBox chkDontShow = (CheckBox)dialog.findViewById(R.id.chk_dont_show);
+            CheckBox chkDontShow = (CheckBox) dialog.findViewById(R.id.chk_dont_show);
             chkDontShow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @SuppressLint("ApplySharedPref")
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         SharedPreferences.Editor settingsEditor = getSharedPreferences(Constants.PREFS_NAME, 0).edit();
                         settingsEditor.putBoolean(Constants.PREF_DONT_SHOW_INSTRUCTIONS, isChecked).commit(); // Commit is required here. So suppressing warning.
                     }
@@ -390,20 +392,21 @@ public class HomeActivity extends BaseActivity
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             Window window = dialog.getWindow();
-            if(window!=null) window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            if (window != null)
+                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             firstRun = false;
         }
 
 
-        if ((barcode == 0 )
+        if ((barcode == 0)
                 && (setDefaults == true)
                 && (protocolInt == 0)) {
             txtScannerConfiguration.setText("");
             txtBarcodeType.setText("");
         } else {
-            if(barcode ==0){
+            if (barcode == 0) {
                 txtBarcodeType.setText(Html.fromHtml(sourceString));
-            }else{
+            } else {
                 txtBarcodeType.setText(Html.fromHtml(sourceString));
             }
 
@@ -415,15 +418,15 @@ public class HomeActivity extends BaseActivity
         SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-1, -1);
         BarCodeView barCodeView = Application.sdkHandler.dcssdkGetPairingBarcode(selectedProtocol, selectedConfig);
-        if(barCodeView!=null) {
+        if (barCodeView != null) {
             updateBarcodeView(layoutParams, barCodeView);
-        }else{
+        } else {
             // SDK was not able to determine Bluetooth MAC. So call the dcssdkGetPairingBarcode with BT Address.
 
-            btAddress= getDeviceBTAddress(settings);
-            if(btAddress.equals("")){
+            btAddress = getDeviceBTAddress(settings);
+            if (btAddress.equals("")) {
                 llBarcode.removeAllViews();
-            }else {
+            } else {
                 Application.sdkHandler.dcssdkSetBTAddress(btAddress);
                 barCodeView = Application.sdkHandler.dcssdkGetPairingBarcode(selectedProtocol, selectedConfig, btAddress);
                 if (barCodeView != null) {
@@ -500,7 +503,7 @@ public class HomeActivity extends BaseActivity
                 });
 
                 final ClipboardManager clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                if(clipBoard!=null) {
+                if (clipBoard != null) {
                     clipBoard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
 
                         @SuppressLint("ApplySharedPref")
@@ -526,7 +529,8 @@ public class HomeActivity extends BaseActivity
                 dialogBTAddress.setCanceledOnTouchOutside(false);
                 dialogBTAddress.show();
                 Window window = dialogBTAddress.getWindow();
-                if(window!=null) window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                if (window != null)
+                    window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 bluetoothMAC = settings.getString(Constants.PREF_BT_ADDRESS, "");
             } else {
                 dialogBTAddress.show();
@@ -551,14 +555,15 @@ public class HomeActivity extends BaseActivity
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         reloadBarcode();
-        if(dialog !=null){
+        if (dialog != null) {
             Window window = dialog.getWindow();
-            if(window!=null) window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            if (window != null)
+                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         }
     }
 
     private void reloadBarcode() {
-       generatePairingBarcode();
+        generatePairingBarcode();
     }
 
     @Override
@@ -590,15 +595,15 @@ public class HomeActivity extends BaseActivity
                 intent.putExtra(Constants.SCANNER_ID, scannerInfo.getScannerID());
                 intent.putExtra(Constants.AUTO_RECONNECTION, scannerInfo.isAutoCommunicationSessionReestablishment());
                 intent.putExtra(Constants.CONNECTED, true);
-                intent.putExtra(Constants.PICKLIST_MODE,getPickListMode(scannerID));
+                intent.putExtra(Constants.PICKLIST_MODE, getPickListMode(scannerID));
 
-                if(scannerInfo.getScannerModel() !=null && scannerInfo.getScannerModel().startsWith("PL3300")){ // remove this condition when CS4070 get the capability
+                if (scannerInfo.getScannerModel() != null && scannerInfo.getScannerModel().startsWith("PL3300")) { // remove this condition when CS4070 get the capability
                     intent.putExtra(Constants.PAGER_MOTOR_STATUS, true);
-                }else {
+                } else {
                     intent.putExtra(Constants.PAGER_MOTOR_STATUS, isPagerMotorAvailable(scannerID));
                 }
 
-                intent.putExtra(Constants.BEEPER_VOLUME,getBeeperVolume(scannerID));
+                intent.putExtra(Constants.BEEPER_VOLUME, getBeeperVolume(scannerID));
 
                 Application.isAnyScannerConnected = true;
                 Application.currentConnectedScannerID = scannerID;
@@ -616,7 +621,7 @@ public class HomeActivity extends BaseActivity
 
         String in_xml = "<inArgs><scannerID>" + scannerID + "</scannerID><cmdArgs><arg-xml><attrib_list>140</attrib_list></arg-xml></cmdArgs></inArgs>";
         StringBuilder outXML = new StringBuilder();
-        executeCommand(DCSSDKDefs.DCSSDK_COMMAND_OPCODE.DCSSDK_RSM_ATTR_GET,in_xml,outXML,scannerID);
+        executeCommand(DCSSDKDefs.DCSSDK_COMMAND_OPCODE.DCSSDK_RSM_ATTR_GET, in_xml, outXML, scannerID);
 
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -644,11 +649,11 @@ public class HomeActivity extends BaseActivity
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
-        if(beeperVolume == 0){
+        if (beeperVolume == 0) {
             return 100;
-        }else if(beeperVolume == 1){
+        } else if (beeperVolume == 1) {
             return 50;
-        }else{
+        } else {
             return 0;
         }
     }
@@ -657,8 +662,8 @@ public class HomeActivity extends BaseActivity
         boolean isFound = false;
         String in_xml = "<inArgs><scannerID>" + scannerID + "</scannerID><cmdArgs><arg-xml><attrib_list>613</attrib_list></arg-xml></cmdArgs></inArgs>";
         StringBuilder outXML = new StringBuilder();
-        executeCommand(DCSSDKDefs.DCSSDK_COMMAND_OPCODE.DCSSDK_RSM_ATTR_GET,in_xml,outXML,scannerID);
-        if(outXML.toString().contains("<id>613</id>")){
+        executeCommand(DCSSDKDefs.DCSSDK_COMMAND_OPCODE.DCSSDK_RSM_ATTR_GET, in_xml, outXML, scannerID);
+        if (outXML.toString().contains("<id>613</id>")) {
             isFound = true;
         }
         return isFound;
@@ -669,7 +674,7 @@ public class HomeActivity extends BaseActivity
         int attrVal = 0;
         String in_xml = "<inArgs><scannerID>" + scannerID + "</scannerID><cmdArgs><arg-xml><attrib_list>402</attrib_list></arg-xml></cmdArgs></inArgs>";
         StringBuilder outXML = new StringBuilder();
-        executeCommand(DCSSDKDefs.DCSSDK_COMMAND_OPCODE.DCSSDK_RSM_ATTR_GET,in_xml,outXML,scannerID);
+        executeCommand(DCSSDKDefs.DCSSDK_COMMAND_OPCODE.DCSSDK_RSM_ATTR_GET, in_xml, outXML, scannerID);
 
         try {
             XmlPullParser parser = Xml.newPullParser();
