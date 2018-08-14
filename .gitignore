@@ -1,0 +1,18 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+.gitignore
+.gradle/
+.idea/
+BarcodeScannerLibrary/BarcodeScannerLibrary.iml
+android_scanner_sdk_demo_v2.3.2.0_src.iml
+build/
+local.properties
+scannercontrol/libs/
+scannercontrol/scannercontrol.iml
